@@ -5,6 +5,7 @@ import javax.swing.undo.UndoManager;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.print.PrinterException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -14,7 +15,7 @@ public class WorkSpace implements ActionListener {
     JTextArea textArea;
     JMenuBar menuBar;
     JMenu fileMenu;
-    JMenuItem OpenFile, SaveFile, NewFile, SaveAsFile, ExitFile;
+    JMenuItem OpenFile, SaveFile, NewFile, SaveAsFile,PrintFile ,ExitFile;
     JMenuItem WordWrap, Arial, MVBoli, timesNewRoman, BookAntiqua, MSGothic, ComicSansMS;
     JMenu FontSize, Fonts;
     JMenuItem setSize8, setSize12, setSize16, setSize20, setSize24, setSize28, setSize32;
@@ -36,7 +37,7 @@ public class WorkSpace implements ActionListener {
     public WorkSpace() {
         // frame
 
-        frame = new JFrame("Notepad");
+        frame = new JFrame("Word TextEditor");
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ImageIcon icon = new ImageIcon("notepad.png");
@@ -63,6 +64,9 @@ public class WorkSpace implements ActionListener {
                 }
                 if (k.isShiftDown() && k.isControlDown() && k.getKeyCode() == KeyEvent.VK_S) {
                     SaveAsFile.doClick();
+                }
+                if (k.isControlDown() && k.getKeyCode() == KeyEvent.VK_P) {
+                    PrintFile.doClick();
                 }
                 if (k.isControlDown() && k.getKeyCode() == KeyEvent.VK_R) {
                     RedoEdit.doClick();
@@ -115,12 +119,15 @@ public class WorkSpace implements ActionListener {
         SaveFile.addActionListener(this);
         SaveAsFile = new JMenuItem("SaveAs (ctrl+shift+N)");
         SaveAsFile.addActionListener(this);
+        PrintFile = new JMenuItem("Print      (ctrl+P)");
+        PrintFile.addActionListener(this);
         ExitFile = new JMenuItem("Exit         (ctrl+E)");
         ExitFile.addActionListener(this);
         fileMenu.add(NewFile);
         fileMenu.add(OpenFile);
         fileMenu.add(SaveFile);
         fileMenu.add(SaveAsFile);
+        fileMenu.add(PrintFile);
         fileMenu.add(ExitFile);
 
         // Edit-menuItems
@@ -194,7 +201,7 @@ public class WorkSpace implements ActionListener {
 
         // Theme-menuItems
 
-        White = new JMenuItem("White");
+        White = new JMenuItem("Light");
         White.addActionListener(this);
         Dark = new JMenuItem("Dark");
         Dark.addActionListener(this);
@@ -270,6 +277,20 @@ public class WorkSpace implements ActionListener {
             saveAs();
 
         }
+
+        //print
+
+          if (e.getSource() == PrintFile) {
+            try {
+                // Attempt to print the text area content
+                 textArea.print();
+            } catch (PrinterException e1) {
+                // Handle the printing exception
+                e1.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Printing failed: " + e1.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
 
         // Exit
 
